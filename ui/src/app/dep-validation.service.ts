@@ -5,7 +5,7 @@ import {HttpClient, HttpHeaders} from '@angular/common/http';
   providedIn: 'root'
 })
 export class DepValidationService {
-  depValidationUrl = 'http://localhost:3000/runValidation';
+  depValidationUrl = 'https://dep-validator-backend.herokuapp.com/runValidation';
 
   constructor(private http: HttpClient) {}
 
