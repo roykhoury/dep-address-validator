@@ -4,7 +4,9 @@
   "description": "backend for dep validation",
   "main": "app.js",
   "private": true,
-  "scripts": {},
+  "scripts": {
+    "run": "node app.js"
+  },
   "author": "Roy Khoury",
   "license": "MIT",
   "dependencies": {
