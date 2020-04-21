@@ -6,7 +6,7 @@ const parser = require('parse-address');
 const GOOGLE_URL = 'https://google.ca';
 const GOOGLE_SEARCH_BAR_SELECTOR = 'input[class="gLFyf gsfi"]';
 const GOOGLE_SIDE_INFO_PANEL = 'span[class="LrzXr"]';
-const OUTPUT_PATH = '../testdata/results/';
+const OUTPUT_PATH = './testdata/results/';
 
 module.exports = {
   runValidation: (async (path, progress, headersCount, outputFilename) => {
@@ -21,7 +21,7 @@ module.exports = {
       // slowMo: 20 // slow down by 20ms
     });
 
-    for (let i = headersCount; i < testData.length; i++) {
+    for (let i = testData.length - 2; i < testData.length; i++) {
       await processSearch(resultArray, testData[i], browser);
       progress.current[outputFilename] = updateProgress(i, testData.length);
     }

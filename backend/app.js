@@ -7,7 +7,7 @@ const fs = require('fs');
 const app = express();
 
 const PORT = 3000;
-const OUTPUT_PATH = '../testdata/results/';
+const OUTPUT_PATH = './testdata/results/';
 
 let progress = {current: {}};
 
@@ -67,7 +67,7 @@ let validateJson = function (res, req) {
 
 let storage = multer.diskStorage({ //multers disk storage settings
   destination: function (req, file, cb) {
-    cb(null, '../testdata/uploads/')
+    cb(null, './testdata/uploads/')
   },
   filename: function (req, file, cb) {
     let timestamp = Date.now();
