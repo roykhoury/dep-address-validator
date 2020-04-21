@@ -1,23 +1,20 @@
 const fs = require('fs');
 const XLSX = require('xlsx');
 
-const outputPath = '../testdata/testData.json';
-
 module.exports = {
-  convert: (async (inputPath) => {
+  convert: (async (path) => {
     try {
-      const workBook = XLSX.readFile(inputPath);
+      const workBook = XLSX.readFile(path);
       const sheet = workBook.Sheets.Accounts;
       const jsonData = XLSX.utils.sheet_to_json(sheet, {header: 1});
-      await fs.writeFileSync(
-        outputPath,
+      fs.writeFileSync(
+        path + ".json",
         JSON.stringify(jsonData, null, 4),
         'utf-8'
       );
-      console.log('Successfully convert xlsx file to JSON!');
+      console.log('Successfully converted: ', path);
     } catch (e) {
       throw Error(e);
     }
-
   }),
 };

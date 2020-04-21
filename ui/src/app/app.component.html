@@ -7,6 +7,7 @@
   <h2>Dep address validator</h2>
   <p>Upload your excel sheet, and let it run!</p>
 
+  <div class="alert alert-danger" *ngIf="errMsg"> {{errMsg}} </div>
   <div class="pt-5 text-center text-black-50 text-muted uploadfilecontainer" (click)="fileInput.click()" appDragDrop (onFileDropped)="uploadFile($event)">
     Drag and drop file here
     <br />

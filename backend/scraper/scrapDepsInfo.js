@@ -6,26 +6,12 @@ const parser = require('parse-address');
 const GOOGLE_URL = 'https://google.ca';
 const GOOGLE_SEARCH_BAR_SELECTOR = 'input[class="gLFyf gsfi"]';
 const GOOGLE_SIDE_INFO_PANEL = 'span[class="LrzXr"]';
-const OUTPUT_PATH = '../testdata/results/testResults.csv';
-
-let resultArray = [[
-  'Name',
-  'Name correction',
-  'Address',
-  'Address correction',
-  'City',
-  'City correction',
-  'State',
-  'State correction',
-  'Zip',
-  'Zip correction',
-  'Notes'
-]];
+const OUTPUT_PATH = '../testdata/results/';
 
 module.exports = {
-  withHeaders: false,
-  runValidation: (async (progress) => {
-    const testData = require('..\\..\\testdata\\testData.json');
+  runValidation: (async (path, progress, headersCount, outputFilename) => {
+    const testData = require('..\\' + path);
+    let resultArray = [['Name', 'Name correction', 'Address', 'Address correction', 'City', 'City correction', 'State', 'State correction', 'Zip', 'Zip correction', 'Notes']];
 
     // configs
     const browser = await puppeteer.launch({
@@ -35,18 +21,17 @@ module.exports = {
       // slowMo: 20 // slow down by 20ms
     });
 
-    const startingIndex = this.withHeaders ? 1 : 0;
-    for (let i = startingIndex; i < testData.length; i++) {
-      await processSearch(testData[i], i, browser);
-      progress.current = updateProgress(i, testData.length);
+    for (let i = headersCount; i < testData.length; i++) {
+      await processSearch(resultArray, testData[i], browser);
+      progress.current[outputFilename] = updateProgress(i, testData.length);
     }
 
     await browser.close();
-    await exportToCsv();
+    await exportToCsv(resultArray, outputFilename);
   }),
 };
 
-let processSearch = async (dataArray, index, browser) => {
+let processSearch = async (resultArray, dataArray, browser) => {
   let depName = dataArray[5];
   let depAddress = convertToEnglish(dataArray[7]);
   let depCity = convertToEnglish(dataArray[9]);
@@ -72,13 +57,6 @@ let processSearch = async (dataArray, index, browser) => {
   if (sidePanel == null) {
     let errMsg = 'Could not find information for: ' + depName;
     console.log(errMsg);
-    //
-    // await page.click('h3[class="LC20lb DKV0Md"]');
-    // const ypAddress = await page.click('div[class="page__container"]');
-    //
-    // console.log(ypAddress);
-    // console.log(text);
-
     dataArray[999] = errMsg;
     resultArray.push(finalizeArray(dataArray));
     await page.close();
@@ -95,16 +73,9 @@ let processSearch = async (dataArray, index, browser) => {
     googleInfo.state = convertToEnglish(addressObj.state);
     googleInfo.zip = addressObj.postal_code;
 
-    // depAddress index is 2, so correction index is 3
     dataArray[8] = !isAddressEqual(googleInfo.street, depAddress) ? googleInfo.street : null;
-
-    // depCity index is 4, so correction index is 5
     dataArray[10] = googleInfo.city != depCity ? googleInfo.city : null;
-
-    // depState index is 6, so correction index is 7
     dataArray[12] = !isStateEqual(googleInfo.state, depState) ? googleInfo.state : null;
-
-    // depZip index is 8, so correction index is 9
     dataArray[14] = !isZipEqual(googleInfo.zip, depZip) ? googleInfo.zip : null;
 
     resultArray.push(finalizeArray(dataArray));
@@ -175,20 +146,20 @@ let isZipEqual = (googleZip, sheetZip) => {
   return googleZip == sheetZip;
 };
 
-let exportToCsv = async () => {
+let exportToCsv = async (resultArray, outputFilename) => {
   const csv = new ObjectsToCsv(resultArray);
-  await csv.toDisk(OUTPUT_PATH);
+  await csv.toDisk(OUTPUT_PATH + outputFilename);
 
-  console.log('Successfully exported to csv. ', OUTPUT_PATH);
+  console.log('Successfully exported to csv. ', OUTPUT_PATH + outputFilename);
 };
 
 let finalizeArray = (dataArray) => {
-  let resultArray = [];
+  let result = [];
   for (let i = 5; i <= 14; i++) {
-    resultArray.push(i === 6 ? null : dataArray[i]);
+    result.push(i === 6 ? null : dataArray[i]);
   }
-  resultArray.push(dataArray[999]);
-  return resultArray;
+  result.push(dataArray[999]);
+  return result;
 };
 
 let updateProgress = (current, total) => {
