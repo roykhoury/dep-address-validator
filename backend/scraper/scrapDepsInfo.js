@@ -18,6 +18,7 @@ module.exports = {
       defaultViewport: null,
       headless: true,
       devtools: false,
+      args: ['--no-sandbox'],
       // slowMo: 20 // slow down by 20ms
     });
 
