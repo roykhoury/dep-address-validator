@@ -22,7 +22,7 @@ module.exports = {
       // slowMo: 20 // slow down by 20ms
     });
 
-    for (let i = testData.length - 2; i < testData.length; i++) {
+    for (let i = headersCount; i < testData.length; i++) {
       await processSearch(resultArray, testData[i], browser);
       progress.current[outputFilename] = updateProgress(i, testData.length);
     }
