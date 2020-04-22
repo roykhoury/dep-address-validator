@@ -10,7 +10,7 @@ const OUTPUT_PATH = './testdata/results/';
 
 module.exports = {
   runValidation: (async (path, progress, headersCount, outputFilename) => {
-    const testData = require('..\\' + path);
+    const testData = require('.\\' + path);
     let resultArray = [['Name', 'Name correction', 'Address', 'Address correction', 'City', 'City correction', 'State', 'State correction', 'Zip', 'Zip correction', 'Notes']];
 
     // configs
