@@ -35,16 +35,11 @@ app.post('/runValidation', function (req, res) {
     }
     req.file.output = removeExtension(req.file.filename);
 
-    try {
-      // in this case, setTimeout is used to separate the function and execute it in a separate thread
-      xlsxConverter.convert(req.file.path);
-      setTimeout(validateJson, 0, res, req);
+    // in this case, setTimeout is used to separate the function and execute it in a separate thread
+    xlsxConverter.convert(req.file.path);
+    setTimeout(validateJson, 0, res, req);
 
-      res.json(req.file);
-    } catch (err) {
-      console.log(err);
-      res.json({error_code: 1, err_desc: err});
-    }
+    res.json(req.file);
   });
 });
 
