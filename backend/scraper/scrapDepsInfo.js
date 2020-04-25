@@ -24,7 +24,7 @@ module.exports = {
 
     for (let i = headersCount; i < testData.length; i++) {
       await processSearch(resultArray, testData[i], browser);
-      progress.current[outputFilename] = updateProgress(i, testData.length);
+      progress.current[outputFilename] = updateProgress(i+1, testData.length);
     }
 
     await browser.close();
@@ -38,6 +38,11 @@ let processSearch = async (resultArray, dataArray, browser) => {
   let depCity = convertToEnglish(dataArray[9]);
   let depState = convertToEnglish(dataArray[11]);
   let depZip = dataArray[13];
+
+  if (depName == null && depAddress == null) {
+    console.log('Empty row encountered ... skipping row');
+    return;
+  }
 
   // go to google website
   const page = await browser.newPage();
@@ -80,7 +85,7 @@ let processSearch = async (resultArray, dataArray, browser) => {
     dataArray[14] = !isZipEqual(googleInfo.zip, depZip) ? googleInfo.zip : null;
 
     resultArray.push(finalizeArray(dataArray));
-    console.table(resultArray);
+    // console.table(resultArray);
   });
 
   await page.close();

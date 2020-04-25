@@ -68,9 +68,6 @@ let validateJson = function (res, req) {
 };
 
 let storage = multer.diskStorage({ //multers disk storage settings
-  destination: function (req, file, cb) {
-    cb(null, './testdata/uploads/')
-  },
   filename: function (req, file, cb) {
     let timestamp = Date.now();
     cb(null, file.fieldname + '-' + timestamp + '.' + file.originalname.split('.')[file.originalname.split('.').length - 1])
@@ -78,13 +75,7 @@ let storage = multer.diskStorage({ //multers disk storage settings
 });
 
 let upload = multer({
-  storage: storage,
-  fileFilter: function (req, file, callback) { //file filter
-    if (['xls', 'xlsx'].indexOf(file.originalname.split('.')[file.originalname.split('.').length - 1]) === -1) {
-      return callback(new Error('Wrong extension type'));
-    }
-    callback(null, true);
-  }
+  storage: storage
 }).single('file');
 
 let removeExtension = (filename) => {

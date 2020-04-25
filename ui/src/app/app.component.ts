@@ -12,6 +12,7 @@ export class AppComponent {
   inputFile: File;
   withHeaders: string;
   errMsg: string;
+  progress: number;
 
   constructor(
     private depValidationService: DepValidationService
@@ -23,10 +24,23 @@ export class AppComponent {
       const element = event[index];
       this.inputFile = (element.name);
     }
+    this.getProgress(this.inputFile.name);
   }
 
   deleteAttachment() {
     this.inputFile = null;
+  }
+
+  getProgress(filename) {
+    let progressInterval = setInterval(() => {
+
+      if (this.progress == 100) {clearInterval(progressInterval)}
+
+      this.depValidationService.getProgress(filename).subscribe(
+        res => {this.errMsg = ''; this.progress = !isNaN(Number(res)) ? 0 : Number(res)},
+        err => {this.errMsg = err.message; console.log(err);}
+      );
+    }, 1000);
   }
 
   submit() {

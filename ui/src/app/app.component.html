@@ -34,6 +34,12 @@
     </button>
   </div>
 
+  <div class="progress mb-3 pl-0 pr-0 text-center row col-9">
+    <div class="progress-bar progress-bar-striped bg-validator-primary" [style.width.%]="progress">
+      {{ progress == null ? '' : progress + "%" }}
+    </div>
+  </div>
+
   <div class="text-center">
     <button class="btn btn-primary" (click)="submit()" [disabled]="!inputFile">Upload</button>
   </div>
