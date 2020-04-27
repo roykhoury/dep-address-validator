@@ -85,7 +85,7 @@ let processSearch = async (resultArray, dataArray, browser) => {
     dataArray[14] = !isZipEqual(googleInfo.zip, depZip) ? googleInfo.zip : null;
 
     resultArray.push(finalizeArray(dataArray));
-    // console.table(resultArray);
+    console.table(resultArray);
   });
 
   await page.close();

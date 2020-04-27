@@ -1,5 +1,5 @@
-import {Injectable} from '@angular/core';
-import {HttpClient, HttpHeaders} from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -8,33 +8,16 @@ export class DepValidationService {
   depValidationUrl = 'https://dep-validator-backend.herokuapp.com/runValidation';
   validationProgressUrl = 'https://dep-validator-backend.herokuapp.com/status';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
-  runValidation(file: File, withHeaders: string) {
-    const formData = new FormData();
-    formData.append('file', file);
+  runValidation(file, withHeaders: string) {
+    let formData = new FormData();
     formData.set('withHeaders', withHeaders);
-
-    const httpOptions = {
-      headers: new HttpHeaders({
-        'Content-Type': 'multipart/form-data',
-        Accept: 'application/json'
-      })
-    };
-
-    return this.http.post(this.depValidationUrl, formData, httpOptions);
+    formData.append('file', file);
+    return this.http.post(this.depValidationUrl, formData);
   }
 
   getProgress(fileName: string) {
-    const formData = new FormData();
-    formData.set('output', fileName);
-
-    const httpOptions = {
-      headers: new HttpHeaders({
-        Accept: 'application/json'
-      })
-    };
-
-    return this.http.post(this.validationProgressUrl, formData, httpOptions);
+    return this.http.get(this.validationProgressUrl, { params: { output: fileName } });
   }
 }

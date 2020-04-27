@@ -1,5 +1,5 @@
-import {Component} from '@angular/core';
-import {DepValidationService} from './dep-validation.service';
+import { Component } from '@angular/core';
+import { DepValidationService } from './dep-validation.service';
 
 @Component({
   selector: 'app-root',
@@ -10,6 +10,8 @@ export class AppComponent {
   title = 'ui';
 
   inputFile: File;
+  inputFilename: string;
+  outputFilename: string;
   withHeaders: string;
   errMsg: string;
   progress: number;
@@ -19,27 +21,43 @@ export class AppComponent {
   ) {
   }
 
-  uploadFile(event) {
+  onDragAndDropChange(event) {
     for (let index = 0; index < event.length; index++) {
       const element = event[index];
-      this.inputFile = (element.name);
+      this.inputFile = element;
+      this.inputFilename = (element.name);
     }
-    this.getProgress(this.inputFile.name);
+  }
+
+  onFileChange(event) {
+    if (event.target.files && event.target.files.length > 0) {
+      let file = event.target.files[0];
+      this.inputFile = file
+      this.inputFilename = file.name;
+    }
   }
 
   deleteAttachment() {
     this.inputFile = null;
   }
 
-  getProgress(filename) {
+  getProgress() {
     let progressInterval = setInterval(() => {
+      console.log(this.progress);
+      if (this.progress == 100)
+        clearInterval(progressInterval)
 
-      if (this.progress == 100) {clearInterval(progressInterval)}
-
-      this.depValidationService.getProgress(filename).subscribe(
-        res => {this.errMsg = ''; this.progress = !isNaN(Number(res)) ? 0 : Number(res)},
-        err => {this.errMsg = err.message; console.log(err);}
-      );
+      this.depValidationService.getProgress(this.outputFilename)
+        .subscribe(
+          res => {
+            this.errMsg = '';
+            this.progress = !isNaN(Number(res)) ? 0 : Number(res);
+          },
+          err => {
+            this.errMsg = err.message;
+            console.log(err);
+          }
+        );
     }, 1000);
   }
 
@@ -52,9 +70,13 @@ export class AppComponent {
 
     this.depValidationService.runValidation(this.inputFile, this.withHeaders)
       .subscribe(
-      res => { this.errMsg = ''; console.log(res); },
-      err => { this.errMsg = err.message; console.log(err); },
-      () => { this.errMsg = ''; console.log('completed'); }
-      );
+        res => {
+          this.errMsg = '';
+          this.outputFilename = res.output;
+          this.getProgress();
+        }, err => {
+          this.errMsg = err.message;
+          console.log(err);
+        });
   }
 }

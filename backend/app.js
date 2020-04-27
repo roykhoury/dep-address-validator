@@ -15,24 +15,22 @@ let progress = {current: {}};
 
 app.get('/status', (req, res) => {
   if (!req.query.output) {
-    res.json({error_code: 1, err_desc: "No fileId passed"});
+    res.status(500).json({error_code: 1, err_desc: "No fileId passed"});
     return;
   }
 
-  return res.json(progress.current[req.query.output]);
+  return res.status(200).json(progress.current[req.query.output]);
 });
 
 app.post('/runValidation', function (req, res) {
   upload(req, res, (err) => {
     if (err) {
-      console.log(err);
-      res.json({error_code: 1, err_desc: 'Unknown error'});
+      res.status(500).json({error_code: 1, err_desc: 'Unknown error'});
       return;
     }
 
     if (!req.file) {
-      console.log(req);
-      res.json({error_code: 1, err_desc: 'No file passed'});
+      res.status(500).json({error_code: 1, err_desc: 'No file passed'});
       return;
     }
     req.file.output = removeExtension(req.file.filename);
@@ -41,25 +39,24 @@ app.post('/runValidation', function (req, res) {
     xlsxConverter.convert(req.file.path);
     setTimeout(validateJson, 0, res, req);
 
-    res.json(req.file);
+    res.status(200).json(req.file);
   });
 });
 
 app.get('/download', function (req, res) {
   if (!req.query.output) {
-    console.log(req.query);
-    res.json({error_code: 1, err_desc: 'Must pass file name to download'})
+    res.status(500).json({error_code: 1, err_desc: 'Must pass file name to download'})
     return;
   }
 
   let path = OUTPUT_PATH + req.query.output;
   if (!fs.existsSync(path)) {
-    res.json({error_code: 3, err_desc: 'File does not exist, it is probably still being processed/validated'});
+    res.status(500).json({error_code: 3, err_desc: 'File does not exist, it is probably still being processed/validated'});
     return;
   }
 
   res.setHeader('Content-disposition', 'attachment; filename=results.csv');
-  res.download(path);
+  res.status(200).download(path);
 });
 
 app.listen(PORT, function () {
