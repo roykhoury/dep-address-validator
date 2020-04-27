@@ -25,6 +25,7 @@ app.get('/status', (req, res) => {
 app.post('/runValidation', function (req, res) {
   upload(req, res, (err) => {
     if (err) {
+      console.log(err);
       res.json({error_code: 1, err_desc: err});
       return;
     }
