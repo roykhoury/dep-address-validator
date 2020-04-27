@@ -26,12 +26,13 @@ app.post('/runValidation', function (req, res) {
   upload(req, res, (err) => {
     if (err) {
       console.log(err);
-      res.json({error_code: 1, err_desc: err});
+      res.json({error_code: 1, err_desc: 'Unknown error'});
       return;
     }
 
     if (!req.file) {
-      res.json({error_code: 1, err_desc: "No file passed"});
+      console.log(req);
+      res.json({error_code: 1, err_desc: 'No file passed'});
       return;
     }
     req.file.output = removeExtension(req.file.filename);
@@ -46,6 +47,7 @@ app.post('/runValidation', function (req, res) {
 
 app.get('/download', function (req, res) {
   if (!req.query.output) {
+    console.log(req.query);
     res.json({error_code: 1, err_desc: 'Must pass file name to download'})
     return;
   }
