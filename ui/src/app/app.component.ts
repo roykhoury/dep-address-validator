@@ -12,7 +12,7 @@ export class AppComponent {
   inputFile: File;
   inputFilename: string;
   outputFilename: string;
-  withHeaders: string;
+  headersCount: string;
   errMsg: string;
   progress: number;
 
@@ -51,7 +51,7 @@ export class AppComponent {
         .subscribe(
           res => {
             this.errMsg = '';
-            this.progress = !isNaN(Number(res)) ? 0 : Number(res);
+            this.progress = Number(res);
           },
           err => {
             this.errMsg = err.message;
@@ -61,6 +61,20 @@ export class AppComponent {
     }, 1000);
   }
 
+  downloadOutput() {
+    this.depValidationService.downloadOutputFile(this.outputFilename)
+      .subscribe(
+        res => {
+          let blob = new Blob([res], {type: 'application/csv'});
+          var downloadURL = window.URL.createObjectURL(blob);
+          var link = document.createElement('a');
+          link.href = downloadURL;
+          link.download = "results.csv";
+          link.click();
+        }
+      )
+  }
+
   submit() {
     console.log('Submitting ', this.inputFile);
     if (this.inputFile == null) {
@@ -68,11 +82,13 @@ export class AppComponent {
       return null;
     }
 
-    this.depValidationService.runValidation(this.inputFile, this.withHeaders)
+    this.depValidationService.runValidation(this.inputFile, this.headersCount)
       .subscribe(
         res => {
           this.errMsg = '';
-          this.outputFilename = res.output;
+          this.outputFilename = res['output'];
+
+          console.log('Downloading ...');
           this.getProgress();
         }, err => {
           this.errMsg = err.message;
