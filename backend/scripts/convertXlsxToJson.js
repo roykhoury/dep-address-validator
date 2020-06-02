@@ -6,15 +6,22 @@ module.exports = {
     try {
       const workBook = XLSX.readFile(path);
       const sheet = workBook.Sheets.Accounts;
-      const jsonData = XLSX.utils.sheet_to_json(sheet, {header: 1});
+      const jsonData = XLSX.utils.sheet_to_json(sheet, {header: 1, blankRows: false});
       fs.writeFileSync(
         path + ".json",
-        JSON.stringify(jsonData, null, 4),
+        JSON.stringify(jsonData, replacer, 4),
         'utf-8'
       );
-      console.log('Successfully converted: ', path);
+      console.log('Successfully converted ' + jsonData.length +' rows to: ', path);
     } catch (e) {
       throw Error(e);
     }
   }),
 };
+
+function replacer(key, value) {
+  if (Array.isArray(value) && value.length === 0) {
+    return undefined;
+  }
+  return value;
+}

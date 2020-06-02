@@ -37,14 +37,14 @@ app.post('/runValidation', function (req, res) {
       return;
     }
     req.file.output = removeExtension(req.file.filename);
+    progress.current[req.file.output] = 0;
+    res.status(200).json(req.file);
 
     // convert xlsx to json file
     xlsxConverter.convert(req.file.path);
 
     // in this case, setTimeout is used to separate the function and execute it in a separate thread
     setTimeout(validateJson, 0, res, req);
-
-    res.status(200).json(req.file);
   });
 });
 
