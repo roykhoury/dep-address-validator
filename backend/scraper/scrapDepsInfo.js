@@ -1,4 +1,4 @@
-const ObjectsToCsv = require('objects-to-csv')
+const ObjectsToCsv = require('objects-to-csv');
 const puppeteer = require('puppeteer');
 const parseAddress = require('parse-address-string');
 const parser = require('parse-address');
@@ -24,7 +24,7 @@ module.exports = {
 
     for (let i = headersCount; i < testData.length; i++) {
       await processSearch(resultArray, testData[i], browser);
-      progress.current[outputFilename] = updateProgress(i+1, testData.length);
+      progress.current[outputFilename] = updateProgress(i + 1, testData.length);
     }
 
     await browser.close();
@@ -154,7 +154,7 @@ let isZipEqual = (googleZip, sheetZip) => {
 
 let exportToCsv = async (resultArray, outputFilename) => {
   const csv = new ObjectsToCsv(resultArray);
-  await csv.toDisk(OUTPUT_PATH + outputFilename);
+  await csv.toDisk(OUTPUT_PATH + outputFilename, {bom: true});
 
   console.log('Successfully exported to csv. ', OUTPUT_PATH + outputFilename);
 };
@@ -169,6 +169,6 @@ let finalizeArray = (dataArray) => {
 };
 
 let updateProgress = (current, total) => {
-  this.progress = ( current / total ) * 100;
+  this.progress = (current / total) * 100;
   return this.progress;
 };

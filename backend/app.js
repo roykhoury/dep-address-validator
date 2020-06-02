@@ -10,7 +10,10 @@ app.use(cors());
 
 const PORT = process.env.PORT || 3000;
 const OUTPUT_PATH = './testdata/results/';
+const outputFileName = 'results.csv';
 
+// progress has a child element in order to pass it by reference,
+// and not by value to the runValidation method on line 74
 let progress = {current: {}};
 
 app.get('/status', (req, res) => {
@@ -35,8 +38,10 @@ app.post('/runValidation', function (req, res) {
     }
     req.file.output = removeExtension(req.file.filename);
 
-    // in this case, setTimeout is used to separate the function and execute it in a separate thread
+    // convert xlsx to json file
     xlsxConverter.convert(req.file.path);
+
+    // in this case, setTimeout is used to separate the function and execute it in a separate thread
     setTimeout(validateJson, 0, res, req);
 
     res.status(200).json(req.file);
@@ -51,11 +56,14 @@ app.get('/download', function (req, res) {
 
   let path = OUTPUT_PATH + req.query.output;
   if (!fs.existsSync(path)) {
-    res.status(500).json({error_code: 3, err_desc: 'File does not exist, it is probably still being processed/validated'});
+    res.status(500).json({
+      error_code: 3,
+      err_desc: 'File does not exist, it is probably still being processed/validated'
+    });
     return;
   }
 
-  res.setHeader('Content-disposition', 'attachment; filename=results.csv');
+  res.setHeader('Content-disposition', 'attachment; filename=' + outputFileName);
   res.status(200).download(path);
 });
 
