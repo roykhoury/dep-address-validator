@@ -49,8 +49,10 @@ export class AppComponent {
   getProgress() {
     let progressInterval = setInterval(() => {
       console.log(this.progress);
-      if (this.progress == 100)
+      if (this.progress == 100) {
         clearInterval(progressInterval)
+        this.loading = false;
+      }
 
       this.depValidationService.getProgress(this.outputFilename)
         .subscribe(
@@ -95,7 +97,6 @@ export class AppComponent {
           this.outputFilename = res['output'];
 
           this.getProgress();
-          this.loading = false;
         }, err => {
           this.errMsg = err.message;
           console.log(err);
