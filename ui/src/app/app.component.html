@@ -36,15 +36,17 @@
 
   <div class="progress mb-3 pl-0 pr-0 text-center row col-9">
     <div class="progress-bar progress-bar-striped bg-validator-primary" [style.width.%]="progress">
-      {{ progress == null ? '' : progress + "%" }}
+      {{ progress == null ? '' : (progress | number:'2.0-0') + "%" }}
     </div>
   </div>
 
   <div class="text-center">
-    <button class="btn btn-primary" (click)="submit()" [disabled]="!inputFile">Upload</button>
+    <button class="btn btn-primary" (click)="submit()" [disabled]="!inputFile">
+      Upload
+    </button>
   </div>
-
-  <div class="text-center mt-3">
+  
+  <div *ngIf="progress === 100" class="text-center mt-3">
     <button class="btn btn-primary" (click)="downloadOutput()" [disabled]="progress != 100"> Download</button>
   </div>
 

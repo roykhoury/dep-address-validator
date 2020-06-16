@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild, ElementRef } from '@angular/core';
 import { DepValidationService } from './dep-validation.service';
 
 @Component({
@@ -7,7 +7,9 @@ import { DepValidationService } from './dep-validation.service';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'ui';
+  title = 'ui'; // to be removed
+
+  @ViewChild('fileInput') fileInputField: ElementRef;
 
   inputFile: File;
   inputFilename: string;
@@ -15,6 +17,7 @@ export class AppComponent {
   headersCount: string;
   errMsg: string;
   progress: number;
+  loading: boolean;
 
   constructor(
     private depValidationService: DepValidationService
@@ -39,6 +42,8 @@ export class AppComponent {
 
   deleteAttachment() {
     this.inputFile = null;
+    this.inputFilename = null;
+    this.fileInputField.nativeElement.value = null;
   }
 
   getProgress() {
@@ -76,20 +81,21 @@ export class AppComponent {
   }
 
   submit() {
-    console.log('Submitting ', this.inputFile);
     if (this.inputFile == null) {
       this.errMsg = 'Error while submitting request!';
       return null;
     }
 
+    this.progress = 0;
+    this.loading = true;
     this.depValidationService.runValidation(this.inputFile, this.headersCount)
       .subscribe(
         res => {
           this.errMsg = '';
           this.outputFilename = res['output'];
 
-          console.log('Downloading ...');
           this.getProgress();
+          this.loading = false;
         }, err => {
           this.errMsg = err.message;
           console.log(err);
