@@ -28,7 +28,7 @@ module.exports = {
       }
 
       await processSearch(resultArray, testData[i], browser);
-      progress.current[outputFilename] = updateProgress(i + 1, testData.length);
+      progress.current[outputFilename] = updateProgress(Number(i) + 1, testData.length);
     }
 
     await browser.close();
@@ -168,6 +168,5 @@ let finalizeArray = (dataArray) => {
 };
 
 let updateProgress = (current, total) => {
-  this.progress = (current / total) * 100;
-  return this.progress;
+  return (current / total) * 100;
 };
